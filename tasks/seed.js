@@ -57,12 +57,3 @@ Quiz.createQuiz(newQuiz,function (err, res) {
             }
     
         });
-
-Quiz.getAllQuiz(function(err,res){
-    if (err) {
-        console.log("Error:" + err);
-    }
-    else {
-        console.log("Res3:" + res);
-    }
-});
