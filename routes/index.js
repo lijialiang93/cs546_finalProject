@@ -50,15 +50,38 @@ router.get('/exam', ensureAuthenticated, function (req, res) {
 			console.log(err);
 		}
 		else {
-			res.render('exam', {
-				quizList: quizList
-			});
+			if (req.user.role === "student") {
+				res.render('exam', {
+					quizList: quizList,
+					Student: true
+				});
+			}
+			else if (req.user.role === "teacher") {
+				res.render('exam', {
+					quizList: quizList,
+					Teacher: true
+				});
+			}
 		}
 	})
 });
 
 router.get('/grades', ensureAuthenticated, function (req, res) {
 	res.render('grades');
+});
+
+router.get('/allQuizzes', ensureAuthenticated, function (req, res) {
+
+	let studentList = [];
+	Quiz.find({}, function (err, quizList) {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			
+			res.render('allQuizzes', { quizList: quizList });
+		}
+	});
 });
 
 router.post('/login',
@@ -104,8 +127,8 @@ router.post('/submit', function (req, res) {
 				answers: answers
 			};
 
-			Submission.createStudentSubmission(quizId, studentSubmission, function(err, newSubmission) {
-				if(err) throw err;
+			Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
+				if (err) throw err;
 				console.log(newSubmission);
 			});
 		}
