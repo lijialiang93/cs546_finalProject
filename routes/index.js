@@ -6,69 +6,73 @@ let User = require('../models/user');
 let Quiz = require('../models/quiz');
 let Submission = require('../models/submissions');
 
-router.get('/', ensureAuthenticated, function(req, res){
-	res.render('dashboard');
+router.get('/', function (req, res) {
+	if (!req.user) { res.render('login'); }
+	else if (req.user.role === "student") { res.render('dashboard', { Student: true }); }
+	else if (req.user.role === "teacher") { res.render('dashboard', { Teacher: true }); }
 });
 
-router.get('/login',ensureAuthenticated, function(req, res){
-  res.redirect('/');
+router.get('/login', ensureAuthenticated, function (req, res) {
+	res.redirect('/');
 });
 
-router.get('/dashboard', ensureAuthenticated, function(req, res){
-	res.render('dashboard');
+router.get('/dashboard', ensureAuthenticated, function (req, res) {
+	if (req.user.role === "student") { res.render('dashboard', { Student: true }); }
+	else if (req.user.role === "teacher") { res.render('dashboard', { Teacher: true }); }
 });
 
-router.get('/information', ensureAuthenticated, function(req, res){
-	res.render('information');
+router.get('/information', ensureAuthenticated, function (req, res) {
+	if (req.user.role === "student") { res.render('information', { Student: true }); }
+	else if (req.user.role === "teacher") { res.render('information', { Teacher: true }); }
 });
 
-router.get('/takeQuiz', ensureAuthenticated, function(req, res){
+router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
 	let url = require('url');
 	let url_parts = url.parse(req.url, true);
 	let query = url_parts.query;
-	Quiz.findById(req.query.quizId,function(err,quiz){
-		if(err){
-			console.log(err);			
+	Quiz.findById(req.query.quizId, function (err, quiz) {
+		if (err) {
+			console.log(err);
 		}
-		else{
+		else {
 			console.log(quiz);
-			res.render('takeQuiz',{
-        quiz: quiz
-    });
+			res.render('takeQuiz', {
+				quiz: quiz
+			});
 		}
 	})
 
 });
 
-router.get('/exam', ensureAuthenticated, function(req, res){
-	Quiz.find({},function(err,quizList){
-		if(err){
-			console.log(err);			
+router.get('/exam', ensureAuthenticated, function (req, res) {
+	Quiz.find({}, function (err, quizList) {
+		if (err) {
+			console.log(err);
 		}
-		else{
-			res.render('exam',{
-        quizList: quizList
-    });
+		else {
+			res.render('exam', {
+				quizList: quizList
+			});
 		}
 	})
 });
 
-router.get('/grades', ensureAuthenticated, function(req, res){
+router.get('/grades', ensureAuthenticated, function (req, res) {
 	res.render('grades');
 });
 
 router.post('/login',
-passport.authenticate('local', {successRedirect:'/dashboard', failureRedirect:'/'}),
-function(req, res) {
-  res.redirect('/');
+	passport.authenticate('local', { successRedirect: '/dashboard', failureRedirect: '/' }),
+	function (req, res) {
+		res.redirect('/');
+	});
+
+router.get('/logout', function (req, res) {
+	req.logout();
+	res.redirect('/');
 });
 
-router.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
-
-router.post('/submit', function(req, res){
+router.post('/submit', function (req, res) {
 	let url = require('url');
 	let url_parts = url.parse(req.url, true);
 	let query = url_parts.query;
@@ -76,25 +80,80 @@ router.post('/submit', function(req, res){
 	let quizId = req.query.quizId;
 	let studentId = req.query.studentId;
 
-		var newUser = new User({
-			name: name,
-			email:email,
-			username: username,
-			password: password
-		});
+	let submission = req.body;
 
-		User.createUser(newUser, function(err, user){
-			if(err) throw err;
-			console.log(user);
-		});
+	Quiz.findById(req.query.quizId, function (err, quiz) {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			console.log(quiz);
+			let numberOfQuestions = quiz.questions.length;
+			var answers = new Array();
+
+			for (i = 1; i <= numberOfQuestions; i++) {
+				let currentAnswer = {
+					id: i,
+					answer: submission.i
+				};
+				answers.push(currentAnswer);
+			}
+
+			let studentSubmission = {
+				studentId: studentId,
+				answers: answers
+			};
+
+			Submission.createStudentSubmission(quizId, studentSubmission, function(err, newSubmission) {
+				if(err) throw err;
+				console.log(newSubmission);
+			});
+		}
+	})
+
+	// let currentQuiz = Quiz.findById(quizId);
+	// console.log("quizId: " + quizId);
+	// console.log(currentQuiz.questions);
+	// let numberOfQuestions = currentQuiz.questions.length;
+
+	// var answers = {};
+
+	// for (i = 1; i <= numberOfQuestions; i++) {
+	// 	let currentAnswer = {
+	// 		id: i,
+	// 		answer: submission.i
+	// 	};
+	// 	answers.push(currentAnswer);
+	// }
+
+	// let studentSubmission = {
+	// 	studentId: studentId,
+	// 	answers: answers
+	// };
+
+	// Submission.createStudentSubmission(quizId, studentSubmission);
+
+
+	// var newUser = new User({
+	// 	name: name,
+	// 	email:email,
+	// 	username: username,
+	// 	password: password
+	// });
+
+	// User.createUser(newUser, function(err, user){
+	// 	if(err) throw err;
+	// 	console.log(user);
+	// });
 
 });
 
-function ensureAuthenticated(req, res, next){
-	if(req.isAuthenticated()){
+function ensureAuthenticated(req, res, next) {
+	if (req.isAuthenticated()) {
 		return next();
 	} else {
-		res.render('login');
+		res.redirect('/');
+		//res.render('login');
 	}
 }
 
