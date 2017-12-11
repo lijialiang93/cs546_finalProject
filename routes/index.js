@@ -1,10 +1,10 @@
-let express = require('express');
-let router = express.Router();
-let passport = require('passport');
-let LocalStrategy = require('passport-local').Strategy;
-let User = require('../models/user');
-let Quiz = require('../models/quiz');
-let Submission = require('../models/submissions');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user');
+const Quiz = require('../models/quiz');
+const Submission = require('../models/submissions');
 
 router.get('/', function (req, res) {
 	if (!req.user) { res.render('login'); }
@@ -110,14 +110,14 @@ router.post('/submit', function (req, res) {
 			console.log(err);
 		}
 		else {
-			console.log(quiz);
+			console.log("Quiz:" + quiz);
 			let numberOfQuestions = quiz.questions.length;
 			var answers = new Array();
 
 			for (i = 1; i <= numberOfQuestions; i++) {
 				let currentAnswer = {
 					id: i,
-					answer: submission.i
+					answer: submission[i]
 				};
 				answers.push(currentAnswer);
 			}
@@ -129,7 +129,8 @@ router.post('/submit', function (req, res) {
 
 			Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
 				if (err) throw err;
-				console.log(newSubmission);
+				//console.log(newSubmission);
+				res.redirect('/exam');
 			});
 		}
 	})

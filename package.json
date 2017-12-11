@@ -24,6 +24,7 @@
     "mongoose": "^4.13.6",
     "passport": "*",
     "passport-http": "*",
-    "passport-local": "*"
+    "passport-local": "*",
+    "uuid": "^3.1.0"
   }
 }

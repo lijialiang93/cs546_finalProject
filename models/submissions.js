@@ -1,4 +1,5 @@
 let mongoose = require('../config/mongoConnection');
+const uuidv4 = require('uuid/v4');
 
 let questionSubmissionSchema = mongoose.Schema({
     id:{
@@ -20,38 +21,62 @@ let quizSubmissionSchema = mongoose.Schema({
     quizId:{
         type: String
     },
-    studentSubmission:[studentSubmissionSchema]
+    studentSubmissions:[studentSubmissionSchema]
 },{
     _id : false
 });
 
 let submissionSchema = mongoose.Schema({
+    _id: {
+        type: String
+    },
     submissions:[quizSubmissionSchema]
 },{
     versionKey: false
 });
 
-let Submission = module.exports = mongoose.model('Submission', submissionSchema);
+let Submission = module.exports = mongoose.model('Submissions', submissionSchema);
 let studentSubmission = module.exports = mongoose.model('studentSubmission', studentSubmissionSchema);
 let quizSubmission = module.exports = mongoose.model('studentSubmissquizSubmissionSchemaion', quizSubmissionSchema);
 let questionSubmission = module.exports = mongoose.model('studentSubmissquizQuestionSchema', questionSubmissionSchema);
 
-module.exports.findSubmission = function(quizId, callback){
-    //let query = {"submissions.quizID":quizId};
-    Submission.findOne({ "submissions.quizId": quizId }, callback);
+let exportedMethods = {
+    findSubmission(quizId) {
+        return Submission.findOne( { "submissions.quizId": quizId} );
+    },
+    createStudentSubmission(quizId, newStudentSubmission) {
+        return Submission.findOne( { "submissions.quizId": quizId} ).then((result) => {
+            if (result !== null) {
+                let allSubmissions = result;
+                let updatedData = {};
+
+                allSubmissions.submissions[0].studentSubmissions.push(newStudentSubmission);
+
+                updatedData = allSubmissions;
+
+                let updateCommand = {
+                    $set: updatedData
+                };
+
+                console.log("Trying to update");
+
+                Submission.findOneAndUpdate( { "submissions.quizId": quizId}, updateCommand);
+            }
+            else {
+                console.log("Start inserting:" + newStudentSubmission);
+                let newquizSubmission = new quizSubmission({
+                    quizId:quizId,
+                    studentSubmissions:[newStudentSubmission]
+                });
+                let newSubmission = new Submission({
+                    _id: uuidv4(),
+                    submissions:[newquizSubmission]
+                });
+                newSubmission.save();
+                return newSubmission;
+            }
+        })
+    }
 }
 
-module.exports.createStudentSubmission = function(quizId,newStudentSubmission,callback){
-    Submission.findSubmission(quizId, function(err, result) {
-        if(result!=null){
-            result.submissions.studentSubmission.push(newStudentSubmission);
-        }
-        else{
-            let newquizSubmission = new quizSubmission({
-                quizId:quizId,
-                studentSubmission:[newStudentSubmission]
-            });
-        }
-    });
-
-}
+module.exports = exportedMethods;
