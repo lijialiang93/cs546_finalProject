@@ -1,6 +1,9 @@
 let mongoose = require('../config/mongoConnection');
 
 let questionSchema = mongoose.Schema({
+    id:{
+        type: String
+    },
     content:{
         type: String
     }

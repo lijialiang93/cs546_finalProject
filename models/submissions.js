@@ -1,12 +1,19 @@
 let mongoose = require('../config/mongoConnection');
 
+let questionSubmissionSchema = mongoose.Schema({
+    id:{
+        type: String
+    },
+    answer:{
+        type:String
+    }
+},{ _id : false });
+
 let studentSubmissionSchema = mongoose.Schema({
     studentId:{
         type: String
     },
-    answer:{
-        type:Array
-    }
+    answers:[questionSubmissionSchema]
 },{ _id : false });
 
 let quizSubmissionSchema = mongoose.Schema({
@@ -27,14 +34,15 @@ let submissionSchema = mongoose.Schema({
 let Submission = module.exports = mongoose.model('Submission', submissionSchema);
 let studentSubmission = module.exports = mongoose.model('studentSubmission', studentSubmissionSchema);
 let quizSubmission = module.exports = mongoose.model('studentSubmissquizSubmissionSchemaion', quizSubmissionSchema);
+let questionSubmission = module.exports = mongoose.model('studentSubmissquizQuestionSchema', questionSubmissionSchema);
 
-module.exports.findSubmission = function(quizId,callback){
-    let query = {"submissions.quizID":quizId};
-    Submission.findOne(query,callback);
+module.exports.findSubmission = function(quizId, callback){
+    //let query = {"submissions.quizID":quizId};
+    Submission.findOne({ "submissions.quizId": quizId }, callback);
 }
 
 module.exports.createStudentSubmission = function(quizId,newStudentSubmission,callback){
-    Submission.findSubmission(quizId,function(err,result){
+    Submission.findSubmission(quizId, function(err, result) {
         if(result!=null){
             result.submissions.studentSubmission.push(newStudentSubmission);
         }
@@ -44,6 +52,6 @@ module.exports.createStudentSubmission = function(quizId,newStudentSubmission,ca
                 studentSubmission:[newStudentSubmission]
             });
         }
-    })
+    });
 
 }
