@@ -11,12 +11,14 @@
         </nav>
          <div class="header clearfix">
        
-        <h3 class="text"> All Quizzes</h3>
+        <h3 class="text">{{quizName}}</h3>
       </div>
-{{#each quizList}}
+{{#each studentList}}
       <div class="row">
-      <span><li>{{name}}</span>
-      <button type="button" class="btn btn-success" onclick="window.location.href='../allSubmissions?quizId={{_id}}&quizName={{name}}'" style="float: right">Check</button>
+      <span><li>{{profile.name}}</span>
+      <button type="button" class="btn btn-danger" onclick="window.location.href='../grading?studentId={{_id}}&studentName={{profile.name}}&quizId={{@root.quizId}}'" style="float: right">Grade</button>
       <hr class="style1"></li>
+              
+
     </div>
 {{/each}}
