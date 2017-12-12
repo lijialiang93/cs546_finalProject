@@ -22,27 +22,40 @@
     myNewTaskForm.submit(function (event) {
         event.preventDefault();
 
-        var newName = newNameInput.val();
-        var newDescription = newDecriptionArea.val();
+        //var newName = newNameInput.val();
+        //var newDescription = newDecriptionArea.val();
         var newContent = $("#new-content");
 
-        if (newName && newDescription) {
+        var quizName = "test quiz";
+        var totalScore = 100;
+        var questions = new Array();
+
+        for (i = 1; i <= qId; i++) {
+            var qContent = $("#q" + i).val();
+            let question = {
+                id: i,
+                content: qContent
+            };
+            questions.push(question);
+        }
+
+        let markup = {
+            name: quizName,
+            totalScore: totalScore,
+            questions: questions
+        };
+
+        if (markup) {
             var requestConfig = {
                 method: "POST",
-                url: "/api/todo",
+                url: "/postQuiz",
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    name: newName,
-                    description: newDescription,
-                    testField: 12,
-                    testBool: true
-                })
+                data: JSON.stringify(markup)
             };
 
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
                 newContent.html(responseMessage.message);
-                //                alert("Data Saved: " + msg);
             });
         }
     });

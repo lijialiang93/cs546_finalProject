@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const xss = require('xss');
+const uuidv4 = require('uuid/v4');
 const User = require('../models/user');
 const Quiz = require('../models/quiz');
 const Submission = require('../models/submissions');
@@ -28,6 +30,26 @@ router.get('/information', ensureAuthenticated, function (req, res) {
 
 router.get('/addQuiz', ensureAuthenticated, function (req, res) {
 	res.render('addQuiz');
+});
+
+router.post("/postQuiz", function (req, res) {
+	console.log(req.body);
+	let quizReceived = req.body;
+	let newQuiz = new Quiz({
+		_id: uuidv4(),
+		name: quizReceived.name,
+		totalScore: quizReceived.totalScore,
+		questions: quizReceived.questions
+	});
+	Quiz.createQuiz(newQuiz, function (err, result) {
+		if (err) {
+			console.log("Error:" + err);
+		}
+		else {
+			console.log("Creating Quiz: " + result);
+		}
+	});
+    res.json({ success: true, message: xss("You have added a quiz successfully!") });
 });
 
 router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
