@@ -73,3 +73,17 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
 		callback(null, isMatch);
 	});
 }
+module.exports.gradeQuiz = function (studentId,quizId,score, callback) {
+	console.log(studentId);
+	console.log(score);
+    const updateCommand = {
+        $set: { "grades.$.score": score}
+    };
+    const query = {
+		_id: studentId,
+		//tem quiz id
+        "grades.quizId": 1,
+	};
+	
+    User.updateOne(query,updateCommand,callback);
+}

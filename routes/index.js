@@ -81,15 +81,82 @@ router.get('/grades', ensureAuthenticated, function (req, res) {
 });
 
 router.get('/allQuizzes', ensureAuthenticated, function (req, res) {
-
-	let studentList = [];
 	Quiz.find({}, function (err, quizList) {
 		if (err) {
 			console.log(err);
 		}
 		else {
-			
+
 			res.render('allQuizzes', { quizList: quizList });
+		}
+	});
+});
+
+router.get('/allSubmissions', ensureAuthenticated, function (req, res) {
+	let url = require('url');
+	let url_parts = url.parse(req.url, true);
+	let query = url_parts.query;
+	let quizId = req.query.quizId;
+	let quizName = req.query.quizName;
+	let studentList = [];
+
+	Submission.findSubmissionByQuizId(quizId, function (err, submissionList) {
+		if (err) {
+			console.log(err);
+		}
+		else {
+			let studentSubmissionsList = submissionList.studentSubmissions;
+			for (let i = 0; i < studentSubmissionsList.length; i++) {
+				User.getUserById(studentSubmissionsList[i].studentId, function (err, user) {
+					studentList.push(user);
+				});
+			}
+			res.render('allSubmissions', { studentList: studentList, quizName: quizName, quizId: quizId });
+		}
+	});
+});
+
+router.get('/grading', ensureAuthenticated, function (req, res) {
+	let url = require('url');
+	let url_parts = url.parse(req.url, true);
+	let query = url_parts.query;
+	let quizId = req.query.quizId;
+	let studentId = req.query.studentId;
+	let studentName = req.query.studentName;
+	let qaList = [];
+
+	Quiz.findById(quizId, function (err, quiz) {
+		let questions = quiz.questions
+		Submission.findSubmissionByQuizIdAndStudentId(quizId, studentId, function (err, submission) {
+			let answers = submission.studentSubmissions[0].answers;
+			for(let i = 0;i<answers.length;i++){
+				const qa = {
+					id : questions[i].id,
+					question : questions[i].content,
+					answer : answers[i]
+				}
+				qaList.push(qa);
+			}
+			res.render('grading',{qaList:qaList,quiz:quiz,studentName:studentName,studentId:studentId});
+		});
+	});
+});
+
+router.post('/grading', ensureAuthenticated, function (req, res) {
+	
+	let url = require('url');
+	let url_parts = url.parse(req.url, true);
+	let query = url_parts.query;
+	let quizId = req.query.quizId;
+	let studentId = req.query.studentId;
+	let score = req.body.score;
+	
+	User.gradeQuiz(studentId,quizId,score,function(err,cb){
+		if(err){
+			console.log(err);
+		}
+		else{
+			res.redirect('allQuizzes');
 		}
 	});
 });

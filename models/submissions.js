@@ -2,32 +2,32 @@ let mongoose = require('../config/mongoConnection');
 const uuidv4 = require('uuid/v4');
 
 let questionSubmissionSchema = mongoose.Schema({
-    id:{
+    id: {
         type: String
     },
-    answer:{
-        type:String
+    answer: {
+        type: String
     }
-},{ _id : false });
+}, { _id: false });
 
 let studentSubmissionSchema = mongoose.Schema({
-    studentId:{
+    studentId: {
         type: String
     },
-    answers:[questionSubmissionSchema]
-},{ _id : false });
+    answers: [questionSubmissionSchema]
+}, { _id: false });
 
 let submissionSchema = mongoose.Schema({
     _id: {
         type: String
     },
-    quizId:{
+    quizId: {
         type: String
     },
-    studentSubmissions:[studentSubmissionSchema]
-},{
-    versionKey: false
-});
+    studentSubmissions: [studentSubmissionSchema]
+}, {
+        versionKey: false
+    });
 
 let Submission = module.exports = mongoose.model('Submissions', submissionSchema);
 let studentSubmission = module.exports = mongoose.model('studentSubmission', studentSubmissionSchema);
@@ -35,11 +35,29 @@ let questionSubmission = module.exports = mongoose.model('studentSubmissquizQues
 
 let exportedMethods = {
     findStudentSubmission(quizId, studentId, callback) {
-        Submission.findOne( { "quizId": quizId , 
-        "studentSubmissions.studentId": studentId}, callback );
+        Submission.findOne({
+            "quizId": quizId,
+            "studentSubmissions.studentId": studentId
+        }, callback);
     },
+
+    findSubmissionByQuizId(quizId, callback) {
+        Submission.findOne({ "quizId": quizId }, { "studentSubmissions": 1, "quizId": 1 }, callback);
+    },
+
+    findSubmissionByQuizIdAndStudentId(quizId, studentId, callback) {
+        Submission.findOne({
+            "quizId": quizId,
+            "studentSubmissions.studentId": studentId
+        },
+        {
+            studentSubmissions: { $elemMatch: { studentId: studentId } },
+        }, 
+        callback);
+    },
+    
     createStudentSubmission(quizId, newStudentSubmission, callback) {
-        return Submission.findOne( { "quizId": quizId} ).then((result) => {
+        return Submission.findOne({ "quizId": quizId }).then((result) => {
             if (result !== null) {
                 let allSubmissions = result;
                 let updatedData = {};
@@ -52,13 +70,13 @@ let exportedMethods = {
                     $set: updatedData
                 };
 
-                Submission.findOneAndUpdate( { "quizId": quizId}, updateCommand, callback);
+                Submission.findOneAndUpdate({ "quizId": quizId }, updateCommand, callback);
             }
             else {
                 let newquizSubmission = new Submission({
                     _id: uuidv4(),
-                    quizId:quizId,
-                    studentSubmissions:[newStudentSubmission]
+                    quizId: quizId,
+                    studentSubmissions: [newStudentSubmission]
                 });
                 newquizSubmission.save(callback);
             }

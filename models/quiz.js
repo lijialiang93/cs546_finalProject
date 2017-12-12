@@ -1,31 +1,32 @@
 let mongoose = require('../config/mongoConnection');
 
 let questionSchema = mongoose.Schema({
-    id:{
+    id: {
         type: String
     },
-    content:{
+    content: {
         type: String
     }
-},{ _id : false });
+}, { _id: false });
 
 let quizSchema = mongoose.Schema({
-    _id:{
+    _id: {
         type: String
     },
-    name:{
+    name: {
         type: String
     },
-    totalScore:{
+    totalScore: {
         type: Number
     },
-    questions:[questionSchema]
-},{
-    versionKey: false
-});
+    questions: [questionSchema]
+}, {
+        versionKey: false
+    });
 
 let Quiz = module.exports = mongoose.model('Quiz', quizSchema);
 
-module.exports.createQuiz = function(newQuiz,callback){
+module.exports.createQuiz = function (newQuiz, callback) {
     newQuiz.save(callback);
 }
+
