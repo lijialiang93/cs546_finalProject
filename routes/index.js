@@ -26,6 +26,10 @@ router.get('/information', ensureAuthenticated, function (req, res) {
 	else if (req.user.role === "teacher") { res.render('information', { Teacher: true }); }
 });
 
+router.get('/addQuiz', ensureAuthenticated, function (req, res) {
+	res.render('addQuiz');
+});
+
 router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
 	let url = require('url');
 	let url_parts = url.parse(req.url, true);
