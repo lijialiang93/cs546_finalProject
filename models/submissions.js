@@ -17,41 +17,34 @@ let studentSubmissionSchema = mongoose.Schema({
     answers:[questionSubmissionSchema]
 },{ _id : false });
 
-let quizSubmissionSchema = mongoose.Schema({
-    quizId:{
-        type: String
-    },
-    studentSubmissions:[studentSubmissionSchema]
-},{
-    _id : false
-});
-
 let submissionSchema = mongoose.Schema({
     _id: {
         type: String
     },
-    submissions:[quizSubmissionSchema]
+    quizId:{
+        type: String
+    },
+    studentSubmissions:[studentSubmissionSchema]
 },{
     versionKey: false
 });
 
 let Submission = module.exports = mongoose.model('Submissions', submissionSchema);
 let studentSubmission = module.exports = mongoose.model('studentSubmission', studentSubmissionSchema);
-let quizSubmission = module.exports = mongoose.model('studentSubmissquizSubmissionSchemaion', quizSubmissionSchema);
 let questionSubmission = module.exports = mongoose.model('studentSubmissquizQuestionSchema', questionSubmissionSchema);
 
 let exportedMethods = {
     findStudentSubmission(quizId, studentId, callback) {
-        Submission.findOne( { "submissions.quizId": quizId , 
-        "submissions.studentSubmissions.studentId": studentId}, callback );
+        Submission.findOne( { "quizId": quizId , 
+        "studentSubmissions.studentId": studentId}, callback );
     },
     createStudentSubmission(quizId, newStudentSubmission, callback) {
-        return Submission.findOne( { "submissions.quizId": quizId} ).then((result) => {
+        return Submission.findOne( { "quizId": quizId} ).then((result) => {
             if (result !== null) {
                 let allSubmissions = result;
                 let updatedData = {};
 
-                allSubmissions.submissions[0].studentSubmissions.push(newStudentSubmission);
+                allSubmissions.studentSubmissions.push(newStudentSubmission);
 
                 updatedData = allSubmissions;
 
@@ -59,18 +52,15 @@ let exportedMethods = {
                     $set: updatedData
                 };
 
-                Submission.findOneAndUpdate( { "submissions.quizId": quizId}, updateCommand, callback);
+                Submission.findOneAndUpdate( { "quizId": quizId}, updateCommand, callback);
             }
             else {
-                let newquizSubmission = new quizSubmission({
+                let newquizSubmission = new Submission({
+                    _id: uuidv4(),
                     quizId:quizId,
                     studentSubmissions:[newStudentSubmission]
                 });
-                let newSubmission = new Submission({
-                    _id: uuidv4(),
-                    submissions:[newquizSubmission]
-                });
-                newSubmission.save(callback);
+                newquizSubmission.save(callback);
             }
         })
     }
