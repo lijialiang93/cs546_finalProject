@@ -36,8 +36,18 @@ router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
 		}
 		else {
 			console.log(quiz);
-			res.render('takeQuiz', {
-				quiz: quiz
+			Submission.findStudentSubmission(req.query.quizId, req.user._id, function (err, result) {
+				if (result != null) {
+					res.render('takeQuiz', {
+						alreadyTaken: true
+					});
+				}
+				else {
+					res.render('takeQuiz', {
+						quiz: quiz,
+						notTaken: true
+					});
+				}
 			});
 		}
 	})
@@ -110,7 +120,6 @@ router.post('/submit', function (req, res) {
 			console.log(err);
 		}
 		else {
-			console.log("Quiz:" + quiz);
 			let numberOfQuestions = quiz.questions.length;
 			var answers = new Array();
 
@@ -129,46 +138,10 @@ router.post('/submit', function (req, res) {
 
 			Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
 				if (err) throw err;
-				//console.log(newSubmission);
 				res.redirect('/exam');
 			});
 		}
 	})
-
-	// let currentQuiz = Quiz.findById(quizId);
-	// console.log("quizId: " + quizId);
-	// console.log(currentQuiz.questions);
-	// let numberOfQuestions = currentQuiz.questions.length;
-
-	// var answers = {};
-
-	// for (i = 1; i <= numberOfQuestions; i++) {
-	// 	let currentAnswer = {
-	// 		id: i,
-	// 		answer: submission.i
-	// 	};
-	// 	answers.push(currentAnswer);
-	// }
-
-	// let studentSubmission = {
-	// 	studentId: studentId,
-	// 	answers: answers
-	// };
-
-	// Submission.createStudentSubmission(quizId, studentSubmission);
-
-
-	// var newUser = new User({
-	// 	name: name,
-	// 	email:email,
-	// 	username: username,
-	// 	password: password
-	// });
-
-	// User.createUser(newUser, function(err, user){
-	// 	if(err) throw err;
-	// 	console.log(user);
-	// });
 
 });
 

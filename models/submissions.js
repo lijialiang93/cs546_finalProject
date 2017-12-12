@@ -41,8 +41,9 @@ let quizSubmission = module.exports = mongoose.model('studentSubmissquizSubmissi
 let questionSubmission = module.exports = mongoose.model('studentSubmissquizQuestionSchema', questionSubmissionSchema);
 
 let exportedMethods = {
-    findSubmission(quizId) {
-        return Submission.findOne( { "submissions.quizId": quizId} );
+    findStudentSubmission(quizId, studentId, callback) {
+        Submission.findOne( { "submissions.quizId": quizId , 
+        "submissions.studentSubmissions.studentId": studentId}, callback );
     },
     createStudentSubmission(quizId, newStudentSubmission, callback) {
         return Submission.findOne( { "submissions.quizId": quizId} ).then((result) => {
