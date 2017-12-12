@@ -44,7 +44,7 @@ let exportedMethods = {
     findSubmission(quizId) {
         return Submission.findOne( { "submissions.quizId": quizId} );
     },
-    createStudentSubmission(quizId, newStudentSubmission) {
+    createStudentSubmission(quizId, newStudentSubmission, callback) {
         return Submission.findOne( { "submissions.quizId": quizId} ).then((result) => {
             if (result !== null) {
                 let allSubmissions = result;
@@ -58,12 +58,9 @@ let exportedMethods = {
                     $set: updatedData
                 };
 
-                console.log("Trying to update");
-
-                Submission.findOneAndUpdate( { "submissions.quizId": quizId}, updateCommand);
+                Submission.findOneAndUpdate( { "submissions.quizId": quizId}, updateCommand, callback);
             }
             else {
-                console.log("Start inserting:" + newStudentSubmission);
                 let newquizSubmission = new quizSubmission({
                     quizId:quizId,
                     studentSubmissions:[newStudentSubmission]
@@ -72,8 +69,7 @@ let exportedMethods = {
                     _id: uuidv4(),
                     submissions:[newquizSubmission]
                 });
-                newSubmission.save();
-                return newSubmission;
+                newSubmission.save(callback);
             }
         })
     }
