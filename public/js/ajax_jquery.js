@@ -1,29 +1,39 @@
 (function ($) {
-    var myNewTaskForm = $("#addingQuiz");
-        //newNameInput = $("#new-task-name"),
-        //newDecriptionArea = $("#new-task-description");
+    var addingQuizForm = $("#addingQuiz");
+    var addQuestionButton = $("#add-question");
+    var removeQuestionButton = $("#remove-question");
+
+    const errorContainer = document.getElementById("error-container");
+    const successMsgContainer = document.getElementById("success-container");
 
     var qId = 1;
     
-    $("#add-question").click(function() {
+    addQuestionButton.click(function() {
+        errorContainer.classList.add("hidden");
+        successMsgContainer.classList.add("hidden");
         qId++;
         var markup = "<div id=\"qId" + qId + "\"><label>Question " + qId + " <textarea id=\"q" + qId + "\" cols=\"50\" type=\"text\" /></label></div>";
         $(".questionArea").append(markup);
     })
 
-    $("#remove-question").click(function() {
+    removeQuestionButton.click(function() {
+        successMsgContainer.classList.add("hidden");
         var currentId = "#qId" + qId;
         if (qId > 1) {
             qId--;
             $(currentId).remove();
         }
+        else {
+            errorContainer.classList.remove("hidden");
+        }
     })
 
-    myNewTaskForm.submit(function (event) {
+    addingQuizForm.submit(function (event) {
         event.preventDefault();
 
-        //var newName = newNameInput.val();
-        //var newDescription = newDecriptionArea.val();
+        errorContainer.classList.add("hidden");
+        successMsgContainer.classList.add("hidden");
+
         var newContent = $("#new-content");
 
         var quizName = "test quiz";
@@ -55,8 +65,52 @@
 
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
-                newContent.html(responseMessage.message);
+                //newContent.html(responseMessage.message);
+                successMsgContainer.classList.remove("hidden");
             });
         }
     });
+
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        return results[1] || 0;
+    }
+
+    var studentQuizForm = $("#student-take-quiz-form");
+
+    studentQuizForm.submit(function (event) {
+        event.preventDefault();
+
+        successMsgContainer.classList.add("hidden");
+
+        let currentQuestionNo = 1;
+        let studentId = $("#student-id").val();
+        var answers = new Array();
+
+        $("textarea").each(function() {
+            var value = $(this).val();
+            let currentAnswer = {
+                id: currentQuestionNo,
+                answer: value
+            };
+            currentQuestionNo++;
+            answers.push(currentAnswer);
+        })
+
+        if (answers) {
+            var requestConfig = {
+                method: "POST",
+                url: "/submit?quizId=" + $.urlParam('quizId') + "&studentId=" + studentId,
+                contentType: 'application/json',
+                data: JSON.stringify(answers)
+            };
+
+            $.ajax(requestConfig).then(function (responseMessage) {
+                console.log(responseMessage);
+                //newContent.html(responseMessage.message);
+                successMsgContainer.classList.remove("hidden");
+            });
+        }
+    });
+
 })(window.jQuery);

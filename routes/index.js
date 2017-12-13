@@ -246,24 +246,15 @@ router.post('/submit', function (req, res) {
 	let quizId = req.query.quizId;
 	let studentId = req.query.studentId;
 
-	let submission = req.body;
+	let answers = req.body;
+
+	console.log("Received: " + answers);
 
 	Quiz.findById(req.query.quizId, function (err, quiz) {
 		if (err) {
 			console.log(err);
 		}
 		else {
-			let numberOfQuestions = quiz.questions.length;
-			var answers = new Array();
-
-			for (i = 1; i <= numberOfQuestions; i++) {
-				let currentAnswer = {
-					id: i,
-					answer: submission[i]
-				};
-				answers.push(currentAnswer);
-			}
-
 			let studentSubmission = {
 				studentId: studentId,
 				answers: answers
@@ -271,7 +262,7 @@ router.post('/submit', function (req, res) {
 
 			Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
 				if (err) throw err;
-				res.redirect('/exam');
+				res.json({ success: true, message: xss("Quiz is submitted successfully!")});
 			});
 		}
 	})

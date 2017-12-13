@@ -1,22 +1,32 @@
+<nav>
+  <ul class="nav nav-pills pull-right">{{#if user}}
+
+    <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
+    <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='../addQuiz'">Add/Edit Exam</button>
+    <button type="button" class="btn btn-warning" onclick="window.location.href='../allQuizzes'">Grading Quiz</button>
+    <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
+    </br>
+    </br>
+    {{/if}}
+  </ul>
+
+</nav>
 <div class="row">
     <form id="addingQuiz">
-      <ol> 
-    <div class="row">
-        <div class="questionArea">
-            <div id="qId1"><label>Question 1 <textarea id="q1" cols="50"></textarea></label></div>
-        </div>
-        <input type="button" id="add-question" value="Add Question" />
-        <input type="button" id="remove-question" value="Remove Question" />
-    </div>
-      </ol>
+        <ol> 
+            <div class="row">
+                <div class="questionArea">
+                    <div id="qId1"><label>Question 1 <textarea id="q1" cols="50"></textarea></label></div>
+                </div>
+                <button type="button" id="add-question" class="btn alert-info">Add Question</button>
+                <button type="button" id="remove-question" class="btn alert-danger">Remove Question</button>
+                <div class="alert alert-danger hidden" role="alert" id="error-container">You must have at least ONE question!</div>
+            </div>
+        </ol>
         <button type="submit" class="btn btn-success" style="float: right">Submit</button>
-      </form>
-    <div class="alert alert-success" role="alert" id="new-content">
+    </form>
+    <div class="alert alert-success hidden" role="alert" id="success-container">
+        This quiz is created successfully! <a href="../dashboard">Back to Dashboard</a>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-        crossorigin="anonymous"></script>
-<script src="/js/ajax_jquery.js"></script>
