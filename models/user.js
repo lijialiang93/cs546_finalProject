@@ -61,6 +61,8 @@ module.exports.getUserById = function (_id, callback) {
 	User.findById(_id, callback);
 }
 
+
+
 module.exports.getUserByName = function (name, callback) {
 	User.getUserByUsername(name, function (err, newUser) {
 
@@ -73,17 +75,43 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
 		callback(null, isMatch);
 	});
 }
-module.exports.gradeQuiz = function (studentId,quizId,score, callback) {
-	console.log(studentId);
-	console.log(score);
-    const updateCommand = {
-        $set: { "grades.$.score": score}
-    };
-    const query = {
-		_id: studentId,
-		//tem quiz id
-        "grades.quizId": 1,
+
+
+//async function
+module.exports.getStudentById = async function (_id) {
+	try {
+		return await User.findById(_id);
+	} catch (error) {
+		console.log(error);
+	}
+
+}
+
+module.exports.getScoreByStudentIdAndQuizId = async function (studentId, quizId) {
+	try {
+		let grade = await User.findOne({
+			"_id": studentId,
+			"grades.quizId": quizId
+		},
+			{
+				grades: { $elemMatch: { quizId: quizId } },
+				"grades.score": 1
+			});
+
+		return grade.grades[0].score;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+module.exports.gradeQuiz = async function (studentId, quizId, score) {
+	const updateCommand = {
+		$set: { "grades.$.score": score }
 	};
-	
-    User.updateOne(query,updateCommand,callback);
+	const query = {
+		_id: studentId,
+		"grades.quizId": quizId
+	};
+
+	await User.updateOne(query, updateCommand);
 }

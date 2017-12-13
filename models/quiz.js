@@ -30,3 +30,17 @@ module.exports.createQuiz = function (newQuiz, callback) {
     newQuiz.save(callback);
 }
 
+module.exports.getQuizById = async function (_id) {
+    try {
+        return await Quiz.findOne({ '_id': _id });
+    } catch (error) {
+        console.log(error);
+    }
+}
+module.exports.getAllQuizzes = async function () {
+    try {
+        return await Quiz.find({});
+    } catch (error) {
+        console.log(error);
+    }
+}

@@ -1,29 +1,37 @@
- <nav>
-          </ul>
-        </nav>
-        {{!-- {{#if notTaken}} --}}
-         <div class="header clearfix">
-       <h3 class="text"> {{quiz.name}}</h3> 
-       <span style="float: left">{{studentName}}</span>
-       <span style="float: right">totalScore:{{quiz.totalScore}}</span>
-      </div>
-      <form method="post" action="grading?quizId={{quiz._id}}&studentId={{studentId}}">
-      <ol>     
-      
-{{#each qaList}}
+<nav>
+  <ul class="nav nav-pills pull-right">{{#if user}}
+
+    <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
+    <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
+    <button type="button" class="btn btn-primary" onclick="window.location.href='../addQuiz'">Add/Edit Exam</button>
+    <button type="button" class="btn btn-warning" onclick="window.location.href='../allQuizzes'">Grading Quiz</button>
+    <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
+    </br>
+    </br>
+    {{/if}}
+  </ul>
+
+</nav>
+<div class="header clearfix">
+  <h3 class="text"> {{quiz.name}}</h3>
+  <span style="float: left">{{studentInfo.studentName}}</span>
+  <span style="float: right">prevScore:{{prevScore}}</span>
+  <span style="float: right">totalScore:{{quiz.totalScore}}</span>
+</div>
+<form method="post" action="grading?quizId={{quiz._id}}&studentId={{studentInfo.studentId}}">
+  <ol>
+
+    {{#each qaList}}
     <div class="row">
-      <h4 class="text"> <li>{{question}}</h4> 
+      <h4 class="text">
+        <li>{{question}}</h4>
       <textarea readonly rows="4" cols="50" placeholder={{answer.answer}}></textarea>
       <hr class="style1">
       </li>
     </div>
-{{/each}}
-      </ol>
-        Score <input class="text" name="score"></input>
-        <button type="submit" class="btn btn-success" style="float: right">Grade</button>
-      </form>
-      {{!-- {{/if}} --}}
-
-      {{!-- {{#if alreadyTaken}}
-      <h3 class="text">You have already taken this quiz. You can't take more than once.</h3> 
-      {{/if}} --}}
+    {{/each}}
+  </ol>
+  Score
+  <input class="text" name="score"></input>
+  <button type="submit" class="btn btn-success" style="float: right">Grade</button>
+</form>

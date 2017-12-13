@@ -41,21 +41,35 @@ let exportedMethods = {
         }, callback);
     },
 
-    findSubmissionByQuizId(quizId, callback) {
-        Submission.findOne({ "quizId": quizId }, { "studentSubmissions": 1, "quizId": 1 }, callback);
+
+    async findSubmissionByQuizId(quizId) {
+        try {
+            return await Submission.findOne({ "quizId": quizId }, { "studentSubmissions": 1, "quizId": 1 });
+        } catch (error) {
+            console.log(error);
+        }
+
     },
 
-    findSubmissionByQuizIdAndStudentId(quizId, studentId, callback) {
-        Submission.findOne({
-            "quizId": quizId,
-            "studentSubmissions.studentId": studentId
-        },
-        {
-            studentSubmissions: { $elemMatch: { studentId: studentId } },
-        }, 
-        callback);
+    async findSubmissionByQuizIdAndStudentId(quizId, studentId) {
+        try {
+            let submission = await Submission.findOne({
+                "quizId": quizId,
+                "studentSubmissions.studentId": studentId
+            },
+                {
+                    studentSubmissions: { $elemMatch: { studentId: studentId } },
+                },
+            );
+            return submission
+        } catch (error) {
+            console.log(error);
+        }
+       
+
     },
-    
+
+
     createStudentSubmission(quizId, newStudentSubmission, callback) {
         return Submission.findOne({ "quizId": quizId }).then((result) => {
             if (result !== null) {
