@@ -78,6 +78,17 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
 
 
 //async function
+module.exports.pushNewGrade = function (studentId, grade, callback) {
+	User.update(
+		(
+			{
+				_id: studentId,
+			}
+
+		), { $push: { grades: grade } }
+		, callback);
+}
+
 module.exports.getStudentById = async function (_id) {
 	try {
 		return await User.findById(_id);
@@ -97,13 +108,13 @@ module.exports.getScoreByStudentIdAndQuizId = async function (studentId, quizId)
 				grades: { $elemMatch: { quizId: quizId } },
 				"grades.score": 1
 			});
-		if(grade!==null){
+		if (grade !== null) {
 			return grade.grades[0].score;
 		}
-		else{
+		else {
 			return null;
 		}
-		
+
 	} catch (error) {
 		console.log(error);
 	}

@@ -32,24 +32,23 @@ router.get('/addQuiz', ensureAuthenticated, function (req, res) {
 	res.render('addQuiz');
 });
 
-router.post("/postQuiz", function (req, res) {
-	console.log(req.body);
-	let quizReceived = req.body;
-	let newQuiz = new Quiz({
-		_id: uuidv4(),
-		name: quizReceived.name,
-		totalScore: quizReceived.totalScore,
-		questions: quizReceived.questions
-	});
-	Quiz.createQuiz(newQuiz, function (err, result) {
-		if (err) {
-			console.log("Error:" + err);
-		}
-		else {
-			console.log("Creating Quiz: " + result);
-		}
-	});
-	res.json({ success: true, message: xss("You have added a quiz successfully!") });
+router.post("/postQuiz", async function (req, res) {
+	try {
+		console.log(req.body);
+		let quizReceived = req.body;
+		let newQuiz = new Quiz({
+			_id: uuidv4(),
+			name: quizReceived.name,
+			totalScore: quizReceived.totalScore,
+			questions: quizReceived.questions
+		});
+
+		await Quiz.createQuiz(newQuiz);
+		res.json({ success: true, message: xss("You have added a quiz successfully!") });
+	} catch (error) {
+		
+	}	
+	
 });
 
 router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
@@ -239,7 +238,7 @@ router.post('/grading', ensureAuthenticated, async function (req, res) {
 		let studentId = req.query.studentId;
 		let score = req.body.score;
 		
-		//temp quiz ID = 1
+		
 		await User.gradeQuiz(studentId, quizId, score);
 		
 		res.redirect('allQuizzes');
@@ -292,7 +291,22 @@ router.post('/submit', function (req, res) {
 		
 					Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
 						if (err) throw err;
-						res.json({ success: true, message: xss("Quiz is submitted successfully!")});
+
+						const grade = {
+							quizId:quizId,
+							score:-1
+						};
+
+						User.pushNewGrade(studentId,grade,function(err,callback){
+							if(err){
+								console.log(err);
+							}
+							else{
+								res.json({ success: true, message: xss("Quiz is submitted successfully!")});
+							}	
+							
+						});
+
 					});
 				}
 			});

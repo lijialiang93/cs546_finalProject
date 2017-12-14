@@ -26,8 +26,13 @@ let quizSchema = mongoose.Schema({
 
 let Quiz = module.exports = mongoose.model('Quiz', quizSchema);
 
-module.exports.createQuiz = function (newQuiz, callback) {
-    newQuiz.save(callback);
+module.exports.createQuiz = async function (newQuiz) {
+    try {
+        await newQuiz.save();;
+    } catch (error) {
+        console.log(error);
+    }
+    
 }
 
 module.exports.getQuizById = async function (_id) {
