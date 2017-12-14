@@ -5,6 +5,7 @@
 
     const errorContainer = document.getElementById("error-container");
     const successMsgContainer = document.getElementById("success-container");
+    const scoreContainer = document.getElementById("score-error");
 
     var qId = 1;
     
@@ -12,7 +13,7 @@
         errorContainer.classList.add("hidden");
         successMsgContainer.classList.add("hidden");
         qId++;
-        var markup = "<div id=\"qId" + qId + "\"><label>Question " + qId + " <textarea id=\"q" + qId + "\" cols=\"50\" type=\"text\" /></label></div>";
+        var markup = "<div id=\"qId" + qId + "\"><h4 class=\"text\"><li>Question " + qId + "</h4><textarea id=\"q" + qId + "\" cols=\"50\" type=\"text\" /></li></div>";
         $(".questionArea").append(markup);
     })
 
@@ -33,12 +34,23 @@
 
         errorContainer.classList.add("hidden");
         successMsgContainer.classList.add("hidden");
+        scoreContainer.classList.add("hidden");
 
         var newContent = $("#new-content");
 
-        var quizName = "test quiz";
-        var totalScore = 100;
+        var quizName = $("#quiz-name").val();
+        var totalScore = 0;
         var questions = new Array();
+
+        try {
+            totalScore = parseFloat($("#quiz-score").val(), 10);
+            console.log(totalScore);
+            if (totalScore <= 0 || isNaN(totalScore)) {
+                scoreContainer.classList.remove("hidden");
+            }
+        } catch (err) {
+            scoreContainer.classList.remove("hidden");
+        }
 
         for (i = 1; i <= qId; i++) {
             var qContent = $("#q" + i).val();
@@ -55,7 +67,7 @@
             questions: questions
         };
 
-        if (markup) {
+        if (markup && markup.totalScore > 0) {
             var requestConfig = {
                 method: "POST",
                 url: "/postQuiz",
@@ -82,6 +94,7 @@
         event.preventDefault();
 
         successMsgContainer.classList.add("hidden");
+        errorContainer.classList.add("hidden");
 
         let currentQuestionNo = 1;
         let studentId = $("#student-id").val();
@@ -108,7 +121,12 @@
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
                 //newContent.html(responseMessage.message);
-                successMsgContainer.classList.remove("hidden");
+                if (responseMessage.success == true) {
+                    successMsgContainer.classList.remove("hidden");
+                }
+                else {
+                    errorContainer.classList.remove("hidden");
+                }
             });
         }
     });

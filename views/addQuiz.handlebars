@@ -1,23 +1,41 @@
 <nav>
-  <ul class="nav nav-pills pull-right">{{#if user}}
+    <ul class="nav nav-pills pull-right">{{#if user}}
 
-    <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
-    <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
-    <button type="button" class="btn btn-primary" onclick="window.location.href='../addQuiz'">Add/Edit Exam</button>
-    <button type="button" class="btn btn-warning" onclick="window.location.href='../allQuizzes'">Grading Quiz</button>
-    <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
-    </br>
-    </br>
-    {{/if}}
-  </ul>
+        <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
+        <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='../addQuiz'">Add Exam</button>
+        <button type="button" class="btn btn-warning" onclick="window.location.href='../allQuizzes'">Grading Quiz</button>
+        <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
+        </br>
+        </br>
+        {{/if}}
+    </ul>
 
 </nav>
+<div class="header clearfix">
+    <h3 class="text">Add a Quiz</h3>
+</div>
 <div class="row">
     <form id="addingQuiz">
-        <ol> 
+        <h4 class="text">
+            <li>The name of the Quiz:</h4>
+        <textarea id="quiz-name" cols="50" rows="1"></textarea>
+        </li>
+        <h4 class="text">
+            <li>Total Score of this Quiz:</h4>
+        <textarea id="quiz-score" cols="10" rows="1"></textarea>
+        </li>
+        <div class="alert alert-danger hidden" role="alert" id="score-error">The score must be numeric and larger than 0.</div>
+        <ol>
             <div class="row">
                 <div class="questionArea">
-                    <div id="qId1"><label>Question 1 <textarea id="q1" cols="50"></textarea></label></div>
+                    <h3 class="text">Write Your Questions Below.</h3>
+                    <div id="qId1">
+                        <h4 class="text">
+                            <li>Question 1</h4>
+                        <textarea id="q1" cols="50"></textarea>
+                        </li>
+                    </div>
                 </div>
                 <button type="button" id="add-question" class="btn alert-info">Add Question</button>
                 <button type="button" id="remove-question" class="btn alert-danger">Remove Question</button>
@@ -27,6 +45,7 @@
         <button type="submit" class="btn btn-success" style="float: right">Submit</button>
     </form>
     <div class="alert alert-success hidden" role="alert" id="success-container">
-        This quiz is created successfully! <a href="../dashboard">Back to Dashboard</a>
+        This quiz is created successfully!
+        <a href="../dashboard">Back to Dashboard</a>
     </div>
 </div>
