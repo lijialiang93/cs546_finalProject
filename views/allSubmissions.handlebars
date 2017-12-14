@@ -13,12 +13,15 @@
        
         <h3 class="text">{{quizName}}</h3>
       </div>
+{{#if subExist}}
 {{#each studentList}}
       <div class="row">
       <span><li>{{profile.name}}</span>
       <button type="button" class="btn btn-danger" onclick="window.location.href='../grading?studentId={{_id}}&studentName={{profile.name}}&quizId={{@root.quizId}}'" style="float: right">Grade</button>
       <hr class="style1"></li>
-              
-
     </div>
 {{/each}}
+
+{{else}}
+  <h3 class="text">No submission for this quiz at this moment</h3> 
+{{/if}}

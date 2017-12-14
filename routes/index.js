@@ -134,7 +134,7 @@ router.get('/allSubmissions', ensureAuthenticated, async function (req, res) {
 
 		let submissionList = await Submission.findSubmissionByQuizId(quizId);
 		if(submissionList === null){
-			res.status(400).send('No subssmison for this quiz');
+			res.render('allSubmissions', { subExist:false, quizName:"No Submission"});
 			return;
 		}
 		let studentSubmissionsList = submissionList.studentSubmissions;
@@ -143,7 +143,7 @@ router.get('/allSubmissions', ensureAuthenticated, async function (req, res) {
 			let student = await User.getStudentById(studentSubmissionsList[i].studentId);
 			studentList.push(student);
 		}
-		res.render('allSubmissions', { studentList: studentList, quizName: quizName, quizId: quizId });
+		res.render('allSubmissions', { subExist:true,studentList: studentList, quizName: quizName, quizId: quizId });
 		}
 		else{
 			res.redirect('/');

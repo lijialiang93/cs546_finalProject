@@ -14,11 +14,11 @@
 </nav>
 <div class="header clearfix">
   <h3 class="text"> {{quiz.name}}</h3>
-  <span style="float: left">{{studentInfo.studentName}}</span>
-  <span style="float: right">prevScore:{{prevScore}}</span>
-  <span style="float: right">totalScore:{{quiz.totalScore}}</span>
+  <span class="text-right">{{studentInfo.studentName}}</span>
+  <p class="text-right">prevScore:{{prevScore}}</p>
+  <p class="text-right">totalScore:{{quiz.totalScore}}</p>
 </div>
-<form method="post" action="grading?quizId={{quiz._id}}&studentId={{studentInfo.studentId}}">
+<form method="post" id="gradeForm" action="grading?quizId={{quiz._id}}&studentId={{studentInfo.studentId}}">
   <ol>
 
     {{#each qaList}}
@@ -31,7 +31,11 @@
     </div>
     {{/each}}
   </ol>
-  Score
-  <input class="text" name="score"></input>
+  <div class="form-group hidden" id="error-container">
+    <div class="alert alert-danger" id="score-alert"></div>
+  </div>
+  <label for="score">Score</label>
+  <input class="text" name="score" id="score"></input>
+
   <button type="submit" class="btn btn-success" style="float: right">Grade</button>
 </form>
