@@ -13,10 +13,12 @@
        
         <h3 class="text"> Grades</h3>
       </div>
-{{#each user.grades}}
+<ol>
+{{#each qsList}}
     <div class="row">
-      <p align="left">QuizId: {{quizId}}</p> 
-      <p align="right">score: {{score}}</p> 
+      <span><li>{{name}}</span>
+      <p class="text-right">score: {{score}}</p> 
       <hr class="style1">
     </div>
 {{/each}}
+</ol>

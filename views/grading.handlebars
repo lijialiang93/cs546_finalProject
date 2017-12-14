@@ -15,8 +15,12 @@
 <div class="header clearfix">
   <h3 class="text"> {{quiz.name}}</h3>
   <span class="text-right">{{studentInfo.studentName}}</span>
-  <p class="text-right">prevScore:{{prevScore}}</p>
-  <p class="text-right">totalScore:{{quiz.totalScore}}</p>
+  <div class="text-right">previous score:
+    <span id="prevScore">{{prevScore}}</span>
+  </div>
+  <div class="text-right">total score:
+    <span id="totalScore">{{quiz.totalScore}}</span>
+  </div>
 </div>
 <form method="post" id="gradeForm" action="grading?quizId={{quiz._id}}&studentId={{studentInfo.studentId}}">
   <ol>

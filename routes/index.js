@@ -102,8 +102,26 @@ router.get('/exam', ensureAuthenticated, function (req, res) {
 	})
 });
 
-router.get('/grades', ensureAuthenticated, function (req, res) {
-	res.render('grades');
+router.get('/grades', ensureAuthenticated, async function (req, res) {
+	try {
+		qsList = [];
+		let allQuizzes = await Quiz.getAllQuizzes();
+		for(let i = 0;i<allQuizzes.length;i++){
+			let score = await User.getScoreByStudentIdAndQuizId(req.user._id,allQuizzes[i]._id);
+			if(score===-1||!score){
+				score = 'Not Yet Graded';
+			}
+			const qs = {
+				name:allQuizzes[i].name,
+				score:score
+			};
+			qsList.push(qs);
+		}
+		res.render('grades',{qsList:qsList});
+	} catch (error) {
+		console.log(error);
+	}
+	
 });
 
 router.get('/allQuizzes', ensureAuthenticated, async function (req, res){
@@ -141,7 +159,15 @@ router.get('/allSubmissions', ensureAuthenticated, async function (req, res) {
 	
 		for (let i = 0; i < studentSubmissionsList.length; i++) {
 			let student = await User.getStudentById(studentSubmissionsList[i].studentId);
-			studentList.push(student);
+			let score = await User.getScoreByStudentIdAndQuizId(studentSubmissionsList[i].studentId,quizId);
+			if(score===-1||!score){
+				score = 'Not Yet Graded';
+			}
+			const ss = {
+				student:student,
+				score:score
+			};
+			studentList.push(ss);
 		}
 		res.render('allSubmissions', { subExist:true,studentList: studentList, quizName: quizName, quizId: quizId });
 		}
@@ -173,9 +199,9 @@ router.get('/grading', ensureAuthenticated, async function (req, res) {
 		let quiz = await Quiz.getQuizById(quizId);
 		let questions = quiz.questions;
 
-		//temp quiz ID = 1 
-		let prevScore = await User.getScoreByStudentIdAndQuizId(studentInfo.studentId,1);
-		if(prevScore === -1){
+		
+		let prevScore = await User.getScoreByStudentIdAndQuizId(studentInfo.studentId,quizId);
+		if(prevScore === -1||!prevScore){
 			prevScore = 'Not Yet Graded';
 		}
 
@@ -214,7 +240,7 @@ router.post('/grading', ensureAuthenticated, async function (req, res) {
 		let score = req.body.score;
 		
 		//temp quiz ID = 1
-		await User.gradeQuiz(studentId, 1, score);
+		await User.gradeQuiz(studentId, quizId, score);
 		
 		res.redirect('allQuizzes');
 		}

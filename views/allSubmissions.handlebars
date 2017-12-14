@@ -16,8 +16,12 @@
 {{#if subExist}}
 {{#each studentList}}
       <div class="row">
-      <span><li>{{profile.name}}</span>
-      <button type="button" class="btn btn-danger" onclick="window.location.href='../grading?studentId={{_id}}&studentName={{profile.name}}&quizId={{@root.quizId}}'" style="float: right">Grade</button>
+      <li>
+      <span >{{student.profile.name}}</span>
+      <span class="text-danger pull-right">{{score}}</span>
+      </li>
+      
+      <button type="button" class="btn btn-danger" onclick="window.location.href='../grading?studentId={{student._id}}&studentName={{student.profile.name}}&quizId={{@root.quizId}}'" style="float: right">Grade</button>
       <hr class="style1"></li>
     </div>
 {{/each}}

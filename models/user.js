@@ -97,8 +97,13 @@ module.exports.getScoreByStudentIdAndQuizId = async function (studentId, quizId)
 				grades: { $elemMatch: { quizId: quizId } },
 				"grades.score": 1
 			});
-
-		return grade.grades[0].score;
+		if(grade!==null){
+			return grade.grades[0].score;
+		}
+		else{
+			return null;
+		}
+		
 	} catch (error) {
 		console.log(error);
 	}

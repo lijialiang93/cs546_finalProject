@@ -12,11 +12,11 @@ let newUser = new User({
         campusId: "123456"
     },
     grades: [{
-        quizId: "1",
+        quizId: "b3988882-627f-4c59",
         score: 99
     },
     {
-        quizId: "2",
+        quizId: "b3988882-627f-5d60",
         score: 98
     }]
 });
@@ -30,7 +30,14 @@ let newStudent = new User({
         name: "John",
         campusId: "234567"
     },
-    grades: []
+    grades: [{
+        quizId: "b3988882-627f-4c59",
+        score: -1
+    },
+    {
+        quizId: "b3988882-627f-5d60",
+        score: -1
+    }]
 });
 
 let newProfessor = new User({
