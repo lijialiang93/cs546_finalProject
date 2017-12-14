@@ -19,6 +19,9 @@
 {{/each}}
       </ol>
         <button type="submit" class="btn btn-success" style="float: right" id="quiz-submit">Submit</button>
+        <div class="alert alert-danger hidden" role="alert" id="error-container">
+          You have submitted this quiz. You can't submit more than once!
+        </div>
         <div class="alert alert-success hidden" role="alert" id="success-container">
           Quiz is submitted successfully! <a href="../exam">Back to Exam List</a>
         </div>

@@ -248,21 +248,27 @@ router.post('/submit', function (req, res) {
 
 	let answers = req.body;
 
-	console.log("Received: " + answers);
-
-	Quiz.findById(req.query.quizId, function (err, quiz) {
+	Quiz.findById(quizId, function (err, quiz) {
 		if (err) {
 			console.log(err);
 		}
 		else {
-			let studentSubmission = {
-				studentId: studentId,
-				answers: answers
-			};
-
-			Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
-				if (err) throw err;
-				res.json({ success: true, message: xss("Quiz is submitted successfully!")});
+			let alreadyTaken = false;
+			Submission.findStudentSubmission(quizId, studentId, function (err, result) {
+				if (result != null) {
+					res.json({ success: false, message: xss("You have submitted this quiz before!")});
+				}
+				else {
+					let studentSubmission = {
+						studentId: studentId,
+						answers: answers
+					};
+		
+					Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
+						if (err) throw err;
+						res.json({ success: true, message: xss("Quiz is submitted successfully!")});
+					});
+				}
 			});
 		}
 	})

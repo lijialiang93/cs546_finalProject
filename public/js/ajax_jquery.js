@@ -82,6 +82,7 @@
         event.preventDefault();
 
         successMsgContainer.classList.add("hidden");
+        errorContainer.classList.add("hidden");
 
         let currentQuestionNo = 1;
         let studentId = $("#student-id").val();
@@ -108,7 +109,12 @@
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
                 //newContent.html(responseMessage.message);
-                successMsgContainer.classList.remove("hidden");
+                if (responseMessage.success == true) {
+                    successMsgContainer.classList.remove("hidden");
+                }
+                else {
+                    errorContainer.classList.remove("hidden");
+                }
             });
         }
     });
