@@ -14,32 +14,33 @@
 </nav>
 <div class="header clearfix">
   <h3 class="text"> {{quiz.name}}</h3>
-  <span class="text-right">{{studentInfo.studentName}}</span>
+  <h4 class="text-left" id="student" data-id={{studentInfo.studentId}}>Student: {{studentInfo.studentName}}</h4>
   <div class="text-right">previous score:
     <span id="prevScore">{{prevScore}}</span>
   </div>
   <div class="text-right">total score:
-    <span id="totalScore">{{quiz.totalScore}}</span>
+    <span id="totalScore" data-id={{quiz._id}}>{{quiz.totalScore}}</span>
   </div>
 </div>
-<form method="post" id="gradeForm" action="grading?quizId={{quiz._id}}&studentId={{studentInfo.studentId}}">
-  <ol>
+  <form id="gradeForm">
+    <ol>
 
-    {{#each qaList}}
-    <div class="row">
-      <h4 class="text">
-        <li>{{question}}</h4>
-      <textarea readonly rows="4" cols="50" placeholder={{answer.answer}}></textarea>
-      <hr class="style1">
-      </li>
+      {{#each qaList}}
+      <div class="row">
+        <h4 class="text">
+          <li>{{question}}</h4>
+        <textarea readonly rows="4" cols="50" placeholder={{answer.answer}}></textarea>
+        <hr class="style1">
+        </li>
+      </div>
+      {{/each}}
+    </ol>
+    <div class="form-group hidden" id="error-container">
+      <div class="alert alert-danger" id="score-alert"></div>
     </div>
-    {{/each}}
-  </ol>
-  <div class="form-group hidden" id="error-container">
-    <div class="alert alert-danger" id="score-alert"></div>
-  </div>
-  <label for="score">Score</label>
-  <input class="text" name="score" id="score"></input>
-
-  <button type="submit" class="btn btn-success" style="float: right">Grade</button>
-</form>
+    <div class="alert alert-success hidden" role="alert" id="success-container">
+    </div>
+    <label for="score">Score</label>
+    <input class="text" name="score" id="score"></input>
+    <button type="submit" class="btn btn-success" style="float: right">Grade</button>
+  </form>

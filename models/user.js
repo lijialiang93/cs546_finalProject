@@ -121,13 +121,19 @@ module.exports.getScoreByStudentIdAndQuizId = async function (studentId, quizId)
 }
 
 module.exports.gradeQuiz = async function (studentId, quizId, score) {
-	const updateCommand = {
-		$set: { "grades.$.score": score }
-	};
-	const query = {
-		_id: studentId,
-		"grades.quizId": quizId
-	};
+	try {
+		const updateCommand = {
+			$set: { "grades.$.score": score }
+		};
+		const query = {
+			_id: studentId,
+			"grades.quizId": quizId
+		};
+	
+		return await User.updateOne(query, updateCommand);
+		
+	} catch (error) {
+		console.log(error);
+	}
 
-	await User.updateOne(query, updateCommand);
 }

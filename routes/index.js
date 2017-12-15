@@ -46,9 +46,9 @@ router.post("/postQuiz", async function (req, res) {
 		await Quiz.createQuiz(newQuiz);
 		res.json({ success: true, message: xss("You have added a quiz successfully!") });
 	} catch (error) {
-		
-	}	
-	
+
+	}
+
 });
 
 router.get('/takeQuiz', ensureAuthenticated, function (req, res) {
@@ -105,31 +105,34 @@ router.get('/grades', ensureAuthenticated, async function (req, res) {
 	try {
 		qsList = [];
 		let allQuizzes = await Quiz.getAllQuizzes();
-		for(let i = 0;i<allQuizzes.length;i++){
-			let score = await User.getScoreByStudentIdAndQuizId(req.user._id,allQuizzes[i]._id);
-			if(score===-1||!score){
+		for (let i = 0; i < allQuizzes.length; i++) {
+			let score = await User.getScoreByStudentIdAndQuizId(req.user._id, allQuizzes[i]._id);
+			if (score === -1) {
 				score = 'Not Yet Graded';
 			}
+			if (!score) {
+				score = 'Not Yet Completed';
+			}
 			const qs = {
-				name:allQuizzes[i].name,
-				score:score
+				name: allQuizzes[i].name,
+				score: score
 			};
 			qsList.push(qs);
 		}
-		res.render('grades',{qsList:qsList});
+		res.render('grades', { qsList: qsList });
 	} catch (error) {
 		console.log(error);
 	}
-	
+
 });
 
-router.get('/allQuizzes', ensureAuthenticated, async function (req, res){
+router.get('/allQuizzes', ensureAuthenticated, async function (req, res) {
 	try {
-		if(req.user.role==='teacher'){
+		if (req.user.role === 'teacher') {
 			let quizList = await Quiz.getAllQuizzes();
 			res.render('allQuizzes', { quizList: quizList });
 		}
-		else{
+		else {
 			res.redirect('/');
 		}
 	} catch (error) {
@@ -141,36 +144,36 @@ router.get('/allSubmissions', ensureAuthenticated, async function (req, res) {
 
 
 	try {
-		if(req.user.role==='teacher'){
-		let url = require('url');
-		let url_parts = url.parse(req.url, true);
-		let query = url_parts.query;
-		let quizId = req.query.quizId;
-		let quizName = req.query.quizName;
-		let studentList = [];
+		if (req.user.role === 'teacher') {
+			let url = require('url');
+			let url_parts = url.parse(req.url, true);
+			let query = url_parts.query;
+			let quizId = req.query.quizId;
+			let quizName = req.query.quizName;
+			let studentList = [];
 
-		let submissionList = await Submission.findSubmissionByQuizId(quizId);
-		if(submissionList === null){
-			res.render('allSubmissions', { subExist:false, quizName:"No Submission"});
-			return;
-		}
-		let studentSubmissionsList = submissionList.studentSubmissions;
-	
-		for (let i = 0; i < studentSubmissionsList.length; i++) {
-			let student = await User.getStudentById(studentSubmissionsList[i].studentId);
-			let score = await User.getScoreByStudentIdAndQuizId(studentSubmissionsList[i].studentId,quizId);
-			if(score===-1||!score){
-				score = 'Not Yet Graded';
+			let submissionList = await Submission.findSubmissionByQuizId(quizId);
+			if (submissionList === null) {
+				res.render('allSubmissions', { subExist: false, quizName: "No Submission" });
+				return;
 			}
-			const ss = {
-				student:student,
-				score:score
-			};
-			studentList.push(ss);
+			let studentSubmissionsList = submissionList.studentSubmissions;
+
+			for (let i = 0; i < studentSubmissionsList.length; i++) {
+				let student = await User.getStudentById(studentSubmissionsList[i].studentId);
+				let score = await User.getScoreByStudentIdAndQuizId(studentSubmissionsList[i].studentId, quizId);
+				if (score === -1 || !score) {
+					score = 'Not Yet Graded';
+				}
+				const ss = {
+					student: student,
+					score: score
+				};
+				studentList.push(ss);
+			}
+			res.render('allSubmissions', { subExist: true, studentList: studentList, quizName: quizName, quizId: quizId });
 		}
-		res.render('allSubmissions', { subExist:true,studentList: studentList, quizName: quizName, quizId: quizId });
-		}
-		else{
+		else {
 			res.redirect('/');
 		}
 
@@ -183,67 +186,72 @@ router.get('/allSubmissions', ensureAuthenticated, async function (req, res) {
 router.get('/grading', ensureAuthenticated, async function (req, res) {
 
 	try {
-		if(req.user.role==='teacher'){
-		let url = require('url');
-		let url_parts = url.parse(req.url, true);
-		let query = url_parts.query;
-		let quizId = req.query.quizId;
+		if (req.user.role === 'teacher') {
+			let url = require('url');
+			let url_parts = url.parse(req.url, true);
+			let query = url_parts.query;
+			let quizId = req.query.quizId;
 
-		const studentInfo = {
-			studentId : req.query.studentId,
-			studentName : req.query.studentName
-		};
+			const studentInfo = {
+				studentId: req.query.studentId,
+				studentName: req.query.studentName
+			};
 
-		let qaList = [];
-		let quiz = await Quiz.getQuizById(quizId);
-		let questions = quiz.questions;
+			let qaList = [];
+			let quiz = await Quiz.getQuizById(quizId);
+			let questions = quiz.questions;
 
-		
-		let prevScore = await User.getScoreByStudentIdAndQuizId(studentInfo.studentId,quizId);
-		if(prevScore === -1||!prevScore){
-			prevScore = 'Not Yet Graded';
-		}
 
-		let submission = await Submission.findSubmissionByQuizIdAndStudentId(quizId, studentInfo.studentId);
-		let answers = submission.studentSubmissions[0].answers;
-	
-		for (let i = 0; i < answers.length; i++) {
-			const qa = {
-				id: questions[i].id,
-				question: questions[i].content,
-				answer: answers[i]
+			let prevScore = await User.getScoreByStudentIdAndQuizId(studentInfo.studentId, quizId);
+			if (prevScore === -1 || !prevScore) {
+				prevScore = 'Not Yet Graded';
 			}
-			qaList.push(qa);
+
+			let submission = await Submission.findSubmissionByQuizIdAndStudentId(quizId, studentInfo.studentId);
+			let answers = submission.studentSubmissions[0].answers;
+
+			for (let i = 0; i < answers.length; i++) {
+				const qa = {
+					id: questions[i].id,
+					question: questions[i].content,
+					answer: answers[i]
+				}
+				qaList.push(qa);
+			}
+
+			res.render('grading', { qaList: qaList, quiz: quiz, studentInfo: studentInfo, prevScore: prevScore });
 		}
-	
-		res.render('grading',{qaList:qaList,quiz:quiz,studentInfo:studentInfo,prevScore:prevScore});
-	}
-	else{
-		res.redirect('/');
-	}
+		else {
+			res.redirect('/');
+		}
 	} catch (error) {
 		console.log(error);
 	}
-	
+
 });
 
 router.post('/grading', ensureAuthenticated, async function (req, res) {
-	
 	try {
-		if(req.user.role==='teacher'){
-		let url = require('url');
-		let url_parts = url.parse(req.url, true);
-		let query = url_parts.query;
-		let quizId = req.query.quizId;
-		let studentId = req.query.studentId;
-		let score = req.body.score;
 		
-		
-		await User.gradeQuiz(studentId, quizId, score);
-		
-		res.redirect('allQuizzes');
+		let reqData = req.body;
+		let data = {
+			role: reqData.role,
+			score: reqData.score,
+			quizId: reqData.quizId,
+			studentId:reqData.studentId
+		};
+
+		if (data.role === 'teacher') {
+			let quizId = data.quizId;
+			let studentId = data.studentId;
+			let score = data.score;
+
+			let update = await User.gradeQuiz(studentId, quizId, score);
+			if(update.nModified===1){
+				res.json({ success: true, message: xss("Graded!") });
+			}
 		}
-		else{
+		else {
 			res.redirect('/');
 		}
 	} catch (error) {
@@ -281,30 +289,30 @@ router.post('/submit', function (req, res) {
 			let alreadyTaken = false;
 			Submission.findStudentSubmission(quizId, studentId, function (err, result) {
 				if (result != null) {
-					res.json({ success: false, message: xss("You have submitted this quiz before!")});
+					res.json({ success: false, message: xss("You have submitted this quiz before!") });
 				}
 				else {
 					let studentSubmission = {
 						studentId: studentId,
 						answers: answers
 					};
-		
+
 					Submission.createStudentSubmission(quizId, studentSubmission, function (err, newSubmission) {
 						if (err) throw err;
 
 						const grade = {
-							quizId:quizId,
-							score:-1
+							quizId: quizId,
+							score: -1
 						};
 
-						User.pushNewGrade(studentId,grade,function(err,callback){
-							if(err){
+						User.pushNewGrade(studentId, grade, function (err, callback) {
+							if (err) {
 								console.log(err);
 							}
-							else{
-								res.json({ success: true, message: xss("Quiz is submitted successfully!")});
-							}	
-							
+							else {
+								res.json({ success: true, message: xss("Quiz is submitted successfully!") });
+							}
+
 						});
 
 					});
