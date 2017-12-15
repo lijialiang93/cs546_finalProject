@@ -3,7 +3,7 @@
         {{#if notTaken}}
          <div class="header clearfix">
        <h3 class="text"> {{quiz.name}}</h3> 
-       <span style="float: right">totalScore:{{quiz.totalScore}}</span>
+       <span class="pull-right">totalScore:{{quiz.totalScore}}</span>
       </div>
       <form id="student-take-quiz-form">
         <input id="student-id" class="hidden" value="{{user._id}}" />
@@ -17,7 +17,7 @@
     </div>
 {{/each}}
       </ol>
-        <button type="submit" class="btn btn-success" style="float: right" id="quiz-submit">Submit</button>
+        <button type="submit" class="btn btn-success pull-right" id="quiz-submit">Submit</button>
         <div class="alert alert-danger hidden" role="alert" id="error-container">
           You have submitted this quiz. You can't submit more than once!
         </div>
