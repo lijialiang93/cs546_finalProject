@@ -10,7 +10,7 @@
     errorContainer.addClass('hidden');
     successMsgContainer.addClass('hidden');
     successMsgContainer.empty();
-    if (isNaN(score.val()) || score.val() > 100 || score.val() < 0) {
+    if (isNaN(score.val()) || score.val() > totalScore.text() || score.val() < 0) {
       var errorAlert = $('#score-alert');
       errorContainer.removeClass('hidden');
       errorAlert.text('Score should between 0-' + totalScore.text());
