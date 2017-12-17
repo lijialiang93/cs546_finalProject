@@ -1,15 +1,13 @@
 <nav>
-  <ul class="nav nav-pills pull-right">{{#if user}}
+  <div class="nav nav-pills pull-right">{{#if user}}
 
     <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
     <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
     <button type="button" class="btn btn-primary" onclick="window.location.href='../addQuiz'">Add/Edit Exam</button>
     <button type="button" class="btn btn-warning" onclick="window.location.href='../allQuizzes'">Grading Quiz</button>
     <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
-    </br>
-    </br>
     {{/if}}
-  </ul>
+  </div>
 
 </nav>
 <div class="header clearfix">
@@ -23,24 +21,25 @@
   </div>
 </div>
   <form id="gradeForm">
-    <ol>
+    {{!-- <ol> --}}
 
       {{#each qaList}}
       <div class="row">
+        {{!-- <li> --}}
         <h4 class="text">
-          <li>{{question}}</h4>
-        <textarea readonly rows="4" cols="50" placeholder={{answer.answer}}></textarea>
+          {{question}}</h4>
+        <textarea readonly rows="4" cols="50" placeholder="{{answer.answer}}"></textarea>
         <hr class="style1">
-        </li>
+        {{!-- </li> --}}
       </div>
       {{/each}}
-    </ol>
+    {{!-- </ol> --}}
     <div class="form-group hidden" id="error-container">
       <div class="alert alert-danger" id="score-alert"></div>
     </div>
     <div class="alert alert-success hidden" role="alert" id="success-container">
     </div>
     <label for="score">Score</label>
-    <input class="text" name="score" id="score"></input>
+    <input class="text" name="score" id="score" />
     <button type="submit" class="btn btn-success pull-right">Grade</button>
   </form>

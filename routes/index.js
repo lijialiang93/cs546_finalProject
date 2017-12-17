@@ -43,9 +43,12 @@ router.post("/postQuiz", async function (req, res) {
 		if (req.user.role === 'teacher') {
 			console.log(req.body);
 			let quizReceived = req.body;
+			for (i = 0; i < quizReceived.questions.length; i++) {
+				quizReceived.questions[i].content = xss(quizReceived.questions[i].content);
+			}
 			let newQuiz = new Quiz({
 				_id: uuidv4(),
-				name: quizReceived.name,
+				name: xss(quizReceived.name),
 				totalScore: quizReceived.totalScore,
 				questions: quizReceived.questions
 			});

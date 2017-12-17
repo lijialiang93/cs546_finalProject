@@ -1,24 +1,23 @@
  <nav>
-          <ul class="nav nav-pills pull-right">{{#if user}}
+          <div class="nav nav-pills pull-right">{{#if user}}
             
           <button type="button" class="btn btn-success" onclick="window.location.href='../dashboard'">Dashboard</button>
           <button type="button" class="btn btn-info" onclick="window.location.href='../information'">Information</button>
           <button type="button" class="btn btn-primary" onclick="window.location.href='../exam'">Exam</button>    
           <button type="button" class="btn btn-warning" onclick="window.location.href='../grades'">Grades</button>
-          <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button></br></br>
+          <button type="button" class="btn btn-danger" onclick="window.location.href='../logout'">Logout</button>
           {{/if}}
-          </ul>
+          </div>
         </nav>
          <div class="header clearfix">
        
         <h3 class="text"> Grades</h3>
-      </div>
-<ol>
+        <p></p>
 {{#each qsList}}
     <div class="row">
-      <span><li>{{name}}</span>
+      <h4 class="pull-left">{{name}}</h4>
       <p class="text-right">score: {{score}}</p> 
-      <hr class="style1">
+      <hr>
     </div>
 {{/each}}
-</ol>
+</div>

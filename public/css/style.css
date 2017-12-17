@@ -39,9 +39,8 @@ body {
   margin: 30px 0;
 }
 
-.jumbotron {
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
+.keep-right {
+  float: right;
 }
 .jumbotron .btn {
   padding: 14px 24px;
@@ -74,8 +73,8 @@ body {
   margin-top:0;
 }
 
-footer{
-  margin-top:40px;
+footer {
+  text-align: center;
 }
 
 .hidden {
@@ -89,4 +88,8 @@ footer{
 
 .info_text {
   text-align: center;
+}
+
+ul {
+  list-style-type: none;
 }

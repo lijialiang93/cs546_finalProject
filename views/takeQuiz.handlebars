@@ -6,20 +6,17 @@
        <span class="pull-right">totalScore:{{quiz.totalScore}}</span>
       </div>
       <form id="student-take-quiz-form">
-        <input id="student-id" class="hidden" value="{{user._id}}" />
-      <ol>        
+        <input id="student-id" class="hidden" value="{{user._id}}" />   
 {{#each quiz.questions}}
     <div class="row">
-      <h4 class="text"> <li>{{content}}</h4> 
+      <h4 class="text"> {{content}}</h4> 
       <textarea rows="4" cols="50" name={{id}}></textarea>
       <hr class="style1">
-      </li>
     </div>
 {{/each}}
-      </ol>
-        <button type="submit" class="btn btn-success pull-right" id="quiz-submit">Submit</button>
+        <button type="submit" class="btn btn-success keep-right" id="quiz-submit">Submit</button>
         <div class="alert alert-danger hidden" role="alert" id="error-container">
-          You have submitted this quiz. You can't submit more than once!
+          You have submitted this quiz. You can't submit more than once! <a href="../exam">Back to Exam List</a>
         </div>
         <div class="alert alert-success hidden" role="alert" id="success-container">
           Quiz is submitted successfully! <a href="../exam">Back to Exam List</a>
@@ -28,5 +25,5 @@
       {{/if}}
 
       {{#if alreadyTaken}}
-      <h3 class="text">You have already taken this quiz. You can't take more than once.</h3> 
+      <h3 class="text">You have already taken this quiz. You can't take more than once. <a href="../exam">Back to Exam List</a></h3> 
       {{/if}}

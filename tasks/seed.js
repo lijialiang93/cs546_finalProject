@@ -6,19 +6,11 @@ let newUser = new User({
     _id: "7b7997a2-c0d2-4f8c-b27a-6a1d4b5b6310",
     role: "student",
     sessionId: "b3988882-627f-4c59-8d5d-54b7a43b030e",
-    hashPassword: "123456",
+    hashPassword: "123",
     profile: {
-        name: "Rick",
+        name: "rick",
         campusId: "123456"
     },
-    // grades: [{
-    //     quizId: "b3988882-627f-4c59",
-    //     score: 99
-    // },
-    // {
-    //     quizId: "b3988882-627f-5d60",
-    //     score: 98
-    // }]
     grades :[]
 });
 
@@ -26,19 +18,11 @@ let newStudent = new User({
     _id: "7b7997a2-c0d2-4f8c-b27a-6a1d4b5b8964",
     role: "student",
     sessionId: "b3988882-627f-4c59-8d5d-54b7a43b030e",
-    hashPassword: "123456",
+    hashPassword: "123",
     profile: {
-        name: "John",
+        name: "john",
         campusId: "234567"
     },
-    // grades: [{
-    //     quizId: "b3988882-627f-4c59",
-    //     score: -1
-    // },
-    // {
-    //     quizId: "b3988882-627f-5d60",
-    //     score: -1
-    // }]
     grades:[]
 });
 
@@ -46,9 +30,9 @@ let newProfessor = new User({
     _id: "7b7997a2-c0d2-4f8c-b27a-6a1d4b5b8745",
     role: "teacher",
     sessionId: "b3988882-627f-4c59-8d5d-54b7a43b030e",
-    hashPassword: "123456789",
+    hashPassword: "123456",
     profile: {
-        name: "Professor",
+        name: "professor",
         campusId: "12345678"
     },
     grades: []
@@ -137,3 +121,6 @@ Quiz.createQuiz(newQuiz2, function (err, res) {
         }
     
     });
+
+
+    

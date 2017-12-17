@@ -13,7 +13,7 @@
         errorContainer.classList.add("hidden");
         successMsgContainer.classList.add("hidden");
         qId++;
-        var markup = "<div id=\"qId" + qId + "\"><h4 class=\"text\"><li>Question " + qId + "</h4><textarea id=\"q" + qId + "\" cols=\"50\" type=\"text\" /></li></div>";
+        var markup = "<li id=\"qId" + qId + "\"><h4 class=\"text\">Question " + qId + "</h4><textarea id=\"q" + qId + "\" cols=\"50\" type=\"text\" /></li>";
         $(".questionArea").append(markup);
     })
 
@@ -36,11 +36,10 @@
         successMsgContainer.classList.add("hidden");
         scoreContainer.classList.add("hidden");
 
-        var newContent = $("#new-content");
-
         var quizName = $("#quiz-name").val();
         var totalScore = 0;
         var questions = new Array();
+        var allQuestionFilled = true;
 
         try {
             totalScore = parseFloat($("#quiz-score").val(), 10);
@@ -54,6 +53,10 @@
 
         for (i = 1; i <= qId; i++) {
             var qContent = $("#q" + i).val();
+            if (!qContent) {
+                allQuestionFilled = false;
+                errorContainer.classList.remove("hidden");
+            }
             let question = {
                 id: i,
                 content: qContent
@@ -67,7 +70,7 @@
             questions: questions
         };
 
-        if (markup && markup.totalScore > 0) {
+        if (markup && markup.totalScore > 0 && allQuestionFilled) {
             var requestConfig = {
                 method: "POST",
                 url: "/postQuiz",
@@ -77,7 +80,6 @@
 
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
-                //newContent.html(responseMessage.message);
                 successMsgContainer.classList.remove("hidden");
             });
         }
@@ -120,7 +122,6 @@
 
             $.ajax(requestConfig).then(function (responseMessage) {
                 console.log(responseMessage);
-                //newContent.html(responseMessage.message);
                 if (responseMessage.success == true) {
                     successMsgContainer.classList.remove("hidden");
                 }
